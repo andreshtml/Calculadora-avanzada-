@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Avanzada</title>
+    <link rel="stylesheet" href="style.css">
+ 
+
+  
+</head>
+<body>
+
+    <div class="calculadora">
+        <div class="pantalla" id="pantalla">0</div>
+        
+        <div class="botones">
+            <button class="btn clear" onclick="limpiarTodo()">C</button>
+            <button class="btn delete" onclick="borrar()">&leftarrow;</button>
+            <button class="btn operator" onclick="establecerOperacion('/')">/</button>
+            <button class="btn operator" onclick="establecerOperacion('*')">x</button>
+            
+            <button class="btn number" onclick="agregarNumero('7')">7</button>
+            <button class="btn number" onclick="agregarNumero('8')">8</button>
+            <button class="btn number" onclick="agregarNumero('9')">9</button>
+            <button class="btn operator" onclick="establecerOperacion('-')">-</button>
+            
+            <button class="btn number" onclick="agregarNumero('4')">4</button>
+            <button class="btn number" onclick="agregarNumero('5')">5</button>
+            <button class="btn number" onclick="agregarNumero('6')">6</button>
+            <button class="btn operator" onclick="establecerOperacion('+')">+</button>
+            
+            <button class="btn number" onclick="agregarNumero('1')">1</button>
+            <button class="btn number" onclick="agregarNumero('2')">2</button>
+            <button class="btn number" onclick="agregarNumero('3')">3</button>
+            
+            <button class="btn number" onclick="agregarNumero('0')">0</button>
+            <button class="btn number" onclick="agregarNumero('.')">.</button>
+            <button class="btn equal" onclick="calcular()">=</button>
+        </div>
+    </div>
+  <style>
+ 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+}
+
+
+.calculadora {⁷
+    
+    
+    
+    l
+    background-color: #333;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    width: 300px; 
+}
+
+.pantalla {
+    background-color: #444;
+    color: white;
+    font-size: 2.5em;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    text-align: right;
+    border-radius: 5px;
+    min-height: 50px;
+    overflow: hidden; 
+}
+
+
+.botones {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columnas de igual ancho */
+    gap: 10px;
+}
+
+
+.btn {
+    background-color: #555;
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: #666;
+}
+
+
+.operator {
+    background-color: #ff9500;
+}
+
+.operator:hover {
+    background-color: #cc7000;
+}
+
+.clear, .delete {
+    background-color: #ccc;
+    color: #333;
+}
+
+.clear {
+    grid-column: span 1; 
+}
+
+.equal {
+    background-color: #007aff;
+    grid-column: span 2; 
+}
+
+.equal:hover {
+    background-color: #005bb5;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+  </style>
+
+    <script >
+  
+const pantalla = document.getElementById('pantalla');
+let operacionActual = '';
+let numeroAnterior = '';
+let operador = null;
+const MAX_DECIMALES = 3
+
+
+function actualizarPantalla() {
+    pantalla.textContent = operacionActual || '0';
+}
+
+
+function agregarNumero(num) {
+    if (num === '.' && operacionActual.includes('.')) return; // Evita múltiples puntos
+    
+    if (operacionActual === '0' && num !== '.') {
+        operacionActual = num;
+    } else {
+        operacionActual += num;
+    }
+    actualizarPantalla();
+}
+
+function borrar() {
+    operacionActual = operacionActual.slice(0, -1);
+    actualizarPantalla();
+}
+
+
+function limpiarTodo() {
+    operacionActual = '';
+    numeroAnterior = '';
+    operador = null;
+    actualizarPantalla();
+}
+
+function establecerOperacion(op) {
+    if (operacionActual === '') return;
+    
+    if (numeroAnterior !== '') {
+        calcular(); 
+    }
+    
+    operador = op;
+    numeroAnterior = operacionActual;
+    operacionActual = ''; 
+}
+
+function calcular() {
+    let resultado;
+    const prev = parseFloat(numeroAnterior);
+    const actual = parseFloat(operacionActual);
+
+    if (isNaN(prev) || isNaN(actual) || operador === null) return;
+
+    switch (operador) {
+        case '+':
+            resultado = prev + actual;
+            break;
+        case '-':
+            resultado = prev - actual;
+            break;
+        case '*':
+            resultado = prev * actual;
+            break;
+        case '/':
+            if (actual === 0) {
+                resultado = 'Error: Div / 0';
+            } else {
+                resultado = prev / actual;
+            }
+            break;
+        default:
+            return;
+    }
+
+   
+    if (typeof resultado === 'number') {
+      
+        
+        let resultadoRedondeado = resultado.toFixed(MAX_DECIMALES);
+        operacionActual = parseFloat(resultadoRedondeado).toString();
+    } else {
+        operacionActual = resultado.toString(); // Si es el mensaje de error
+    }
+
+    operador = null;
+    numeroAnterior = '';
+    actualizarPantalla();
+}
+
+
+document.addEventListener('DOMContentLoaded', actualizarPantalla);
+
+  
+  </script>
+</body>
+</html>
